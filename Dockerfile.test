@@ -1,0 +1,59 @@
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    python3-pip \
+    python3-venv \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create venv, activate it, and install dependencies
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+ENV VIRTUAL_ENV="/opt/venv"
+
+# Verify pip is available and install packages
+RUN /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install --no-cache-dir pytest click python-frontmatter
+
+# Verify pytest is installed
+RUN /opt/venv/bin/python -m pytest --version
+
+RUN git config --global user.email "test@test.com" && \
+    git config --global user.name "Test"
+
+# Copy source JS repo
+WORKDIR /source
+COPY source_repo/ /source/
+RUN npm install
+RUN node bin/mdforge.js --version
+RUN rm -rf .git && git init && git add -A && git commit -m "source state" --quiet
+
+# Copy golden Python translation
+WORKDIR /target
+COPY golden_repo/ /target/
+
+# Create tests directory
+RUN mkdir -p /target/tests
+
+RUN cd /target && git init && git add -A && git commit -m "golden" --quiet
+
+# Inject behavioral tests
+COPY behavioral_tests/test_mdforge_behavioral.py /target/tests/test_mdforge_behavioral.py
+
+# Install the golden package into the venv
+RUN /opt/venv/bin/pip install -e /target
+
+RUN id user >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash user
+RUN chown -R user:user /source /target /opt/venv
+
+USER user
+WORKDIR /target
+
+CMD ["/opt/venv/bin/python", "-m", "pytest", \
+     "/target/tests/test_mdforge_behavioral.py", \
+     "--rootdir=/target/tests", \
+     "-v", "--tb=short", "--no-header", "-rA", \
+     "--color=no", "-p", "no:cacheprovider"]
