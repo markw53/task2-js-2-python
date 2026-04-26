@@ -2,6 +2,21 @@
 
 import re
 
+# Link pattern built from char codes to avoid shell/editor corruption
+_LINK_RE = re.compile(
+    chr(92) + chr(91)
+    + "([^"
+    + chr(92) + chr(93)
+    + "]+)"
+    + chr(92) + chr(93)
+    + chr(92) + chr(40)
+    + "([^"
+    + chr(41)
+    + "]+)"
+    + chr(92) + chr(41)
+)
+
+
 
 def to_html(content: str) -> str:
     """Convert Markdown content to simplified HTML."""
@@ -178,7 +193,7 @@ def _inline_markdown(text: str) -> str:
         url = match.group(2)
         return f'<a href="{url}">{link_text}</a>'
 
-    result = re.sub(r"$$([^$$]+)\]\(([^)]+)\)", _link_replace, result)
+    result = _LINK_RE.sub(_link_replace, result)
     
     return result
 

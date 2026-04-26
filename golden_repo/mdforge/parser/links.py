@@ -2,20 +2,11 @@
 
 import re
 
-LINK_PATTERN = re.compile(r"$$([^$$]*)\]\(([^)]+)\)")
+LINK_PATTERN = re.compile('\\[([^\\]]*)\\]\\(([^)]+)\\)')
 
 
 def extract_links(body: str) -> list[dict]:
-    """Extract all links from Markdown body content.
-
-    Categorizes links as:
-        - "internal": relative paths
-        - "external": absolute URLs (http://, https://)
-        - "anchor": same-page anchors (#section)
-        - "other": mailto:, ftp://, etc.
-
-    Skips links inside fenced code blocks.
-    """
+    """Extract all links from Markdown body content."""
     links = []
     lines = body.split("\n")
     in_code_block = False
