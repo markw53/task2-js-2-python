@@ -16,7 +16,7 @@
   "difficulty_band": "medium",
   "title": "Translate Markdown processing CLI toolkit from JavaScript to Python",
   "build_cmd": "cd /target && pip install -e .",
-  "test_cmd": "cd /target && /opt/venv/bin/pip install -e . && MDFORGE_BIN='/opt/venv/bin/python -m mdforge' /opt/venv/bin/python -m pytest /target/tests/test_mdforge_behavioral.py --rootdir=/target/tests -v --tb=short --no-header -rA --color=no -p no:cacheprovider",
+  "test_cmd": "cd /target && /opt/venv/bin/pip install -e . && MDFORGE_BIN=/opt/venv/bin/mdforge /opt/venv/bin/python -m pytest /target/tests/test_mdforge_behavioral.py --rootdir=/target/tests -v --tb=short --no-header -rA --color=no -p no:cacheprovider",
   "log_parser": "parse_log_pytest",
   "FAIL_TO_PASS": [
     "test_mdforge_behavioral.py::TestParseCommand::test_parse_simple_file",
