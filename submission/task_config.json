@@ -3,7 +3,7 @@
   "pipeline": "sycamore",
   "task_type": "repository_translation",
   "repo": {
-    "image_name": "micro1ai/sycamore-mdforge:task001-v1",
+    "image_name": "micro1ai/sycamore-taskqueue:task001-a0ed484",
     "repo_dir": "/source"
   },
   "target": {
