@@ -63,5 +63,6 @@
     "test_mdforge_behavioral.py::TestEdgeCases::test_word_count_excludes_code"
   ],
   "PASS_TO_PASS": [],
+  "expected_test_count": 42,
   "golden_repo": "golden_repo"
 }
